@@ -23,7 +23,6 @@ exports.requestMessage = async ({ address, chain, networkType }) => {
         expirationTime: expirationTime.toISOString(),
         timeout: TIMEOUT,
     });
-
     return result.toJSON().message;
 };
 

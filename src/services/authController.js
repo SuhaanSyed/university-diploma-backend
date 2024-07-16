@@ -18,6 +18,7 @@ exports.verify = async (req, res, next) => {
         const result = await verifyMessage({ networkType, message, signature });
 
         if (result.needsRegistration) {
+            console.log("reached this point");
             return res.status(200).json({ needsRegistration: true, authData: result.authData });
         }
 
