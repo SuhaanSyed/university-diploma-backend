@@ -53,19 +53,33 @@ exports.verifyMessage = async ({ networkType, signature, message }) => {
     return { user, token };
 };
 
+// get authData
+exports.getAuthData = async ({ networkType, message, signature }) => {
+    console.log("reached authService getAuthData");
+    const result = await Moralis.Auth.verify({ networkType, signature, message });
+    console.log(result.toJSON());
+    return result.toJSON();
+};
+
 exports.registerUser = async (authData, role, name, email) => {
+    console.log(authData);
+    console.log(role);
+    console.log(name);
+    console.log(email);
     const response = await supabase
         .from('users')
         .insert({
             moralis_provider_id: authData.profileId,
             metadata: authData,
-            role,
-            name,
-            email,
+            role: role,
+            name: name,
+            email: email,
         })
         .single();
 
+    console.log(response);
     const user = response.data;
+    console.log(user);
 
     const token = jwt.sign(
         {
