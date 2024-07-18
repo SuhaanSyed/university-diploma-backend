@@ -66,7 +66,8 @@ exports.registerUser = async (authData, role, name, email) => {
     console.log(role);
     console.log(name);
     console.log(email);
-    const response = await supabase
+
+    const insertResponse = await supabase
         .from('users')
         .insert({
             moralis_provider_id: authData.profileId,
@@ -75,10 +76,16 @@ exports.registerUser = async (authData, role, name, email) => {
             name: name,
             email: email,
         })
+        .select()
         .single();
 
-    console.log(response);
-    const user = response.data;
+    console.log("Supabase insert response:", insertResponse);
+
+    if (insertResponse.error) {
+        throw new Error(insertResponse.error.message);
+    }
+
+    const user = insertResponse.data;
     console.log(user);
 
     const token = jwt.sign(
