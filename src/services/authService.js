@@ -67,7 +67,20 @@ exports.registerUser = async (authData, role, name, email) => {
     console.log(name);
     console.log(email);
 
-    const insertResponse = await supabase
+    // Check if user already exists
+    const { data: existingUser, error: checkError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('moralis_provider_id', authData.profileId)
+        .select()
+        .single();
+
+    if (existingUser) {
+        throw new Error('User with this account already exists.');
+    }
+
+    // Insert new user
+    const { data: user, error: insertError } = await supabase
         .from('users')
         .insert({
             moralis_provider_id: authData.profileId,
@@ -76,17 +89,14 @@ exports.registerUser = async (authData, role, name, email) => {
             name: name,
             email: email,
         })
-        .select()
+        .select() // Ensure the inserted data is returned
         .single();
 
-    console.log("Supabase insert response:", insertResponse);
-
-    if (insertResponse.error) {
-        throw new Error(insertResponse.error.message);
+    if (insertError) {
+        throw new Error(insertError.message);
     }
 
-    const user = insertResponse.data;
-    console.log(user);
+    console.log("User inserted:", user);
 
     const token = jwt.sign(
         {
