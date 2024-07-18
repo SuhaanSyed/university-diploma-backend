@@ -34,6 +34,7 @@ exports.verifyMessage = async ({ networkType, signature, message }) => {
         .from('users')
         .select('*')
         .eq('moralis_provider_id', authData.profileId)
+        .select()
         .single();
 
     if (!user) {
@@ -45,6 +46,7 @@ exports.verifyMessage = async ({ networkType, signature, message }) => {
             ...user,
             aud: 'authenticated',
             role: user.role,
+            name: user.name,
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
         },
         process.env.JWT_SECRET
@@ -103,6 +105,7 @@ exports.registerUser = async (authData, role, name, email) => {
             ...user,
             aud: 'authenticated',
             role: user.role,
+            name: user.name,
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
         },
         process.env.JWT_SECRET
