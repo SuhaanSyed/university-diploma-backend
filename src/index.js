@@ -5,6 +5,7 @@ const Moralis = require('moralis').default;
 const cors = require('cors');
 const { errorHandler } = require('./middlewares/errorHandler');
 const authRouter = require('./routes/auth');
+const collegeRoutes = require('./routes/collegeRoutes');
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Route handlers
 app.use('/auth', authRouter);
+app.use('/api', collegeRoutes);
 
 // Default route handler for base URL
 app.get('/', (req, res) => {
